@@ -280,9 +280,20 @@ function commerce_paypal_wpp_submit_form_submit($payment_method, $pane_form, $pa
       $valid_billing_address = FALSE;
     }
 
-    foreach (array('thoroughfare', 'locality', 'postal_code', 'country') as $address_key) {
-      if (empty($address_value[$address_key])) {
-        $valid_billing_address = FALSE;
+    if (empty($address_value['country'])) {
+      $valid_billing_address = FALSE;
+    }
+    else {
+      // Load the predefined address format for the selected country.
+      module_load_include('inc', 'addressfield', 'addressfield.address_formats');
+      $address_format = addressfield_get_address_format($address_value['country']);
+      $address_required_fields = $address_format['required_fields'];
+
+      // Run validation based on the fields provided by the addressfield module.
+      foreach ($address_required_fields as $address_key) {
+        if (empty($address_value[$address_key])) {
+          $valid_billing_address = FALSE;
+        }
       }
     }
   }
