@@ -260,6 +260,7 @@ function commerce_paypal_ec_default_settings() {
     'show_payment_instructions' => FALSE,
     'update_billing_profiles' => TRUE,
     'enable_bml' => FALSE,
+    'enable_on_cart' => TRUE,
   );
 
   if (module_exists('commerce_shipping')) {
@@ -433,6 +434,12 @@ function commerce_paypal_ec_settings_form($settings = array()) {
     '#markup' => commerce_paypal_ec_bml_help_text(),
   );
 
+  $form['enable_on_cart'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Show the PayPal Express Checkout button on the cart form.'),
+    '#default_value' => $settings['enable_on_cart'],
+  );
+
   return $form;
 }
 
@@ -465,18 +472,20 @@ function commerce_paypal_ec_form_alter(&$form, &$form_state, $form_id) {
     if (!empty($form_state['build_info']['args'][0]->result)) {
       $order = $form_state['order'];
 
-      // And Express Checkout is also available as a payment option in checkout...
+      // And Express Checkout is also available as a payment option in checkout.
       if (commerce_paypal_ec_enabled($order)) {
         // Add the Express Checkout form as a suffix to the cart form.
         $payment_method = commerce_payment_method_instance_load('paypal_ec|commerce_payment_paypal_ec');
 
-        $ec_form = drupal_get_form('commerce_paypal_ec_order_form', $payment_method, $order);
-        $form['#suffix'] .= drupal_render($ec_form);
+        if (!isset($payment_method['settings']['enable_on_cart']) || !empty($payment_method['settings']['enable_on_cart'])) {
+          $ec_form = drupal_get_form('commerce_paypal_ec_order_form', $payment_method, $order);
+          $form['#suffix'] .= drupal_render($ec_form);
 
-        // Add the PayPal Credit form with a separator if enabled.
-        if (!empty($payment_method['settings']['enable_bml'])) {
-          $bml_form = drupal_get_form('commerce_paypal_bml_order_form', $payment_method, $order, TRUE);
-          $form['#suffix'] .= drupal_render($bml_form);
+          // Add the PayPal Credit form with a separator if enabled.
+          if (!empty($payment_method['settings']['enable_bml'])) {
+            $bml_form = drupal_get_form('commerce_paypal_bml_order_form', $payment_method, $order, TRUE);
+            $form['#suffix'] .= drupal_render($bml_form);
+          }
         }
       }
     }
