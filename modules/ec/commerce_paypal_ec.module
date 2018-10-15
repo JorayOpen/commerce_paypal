@@ -1328,16 +1328,8 @@ function commerce_paypal_ec_itemize_order($order, $currency_code) {
         'L_PAYMENTREQUEST_0_NAME' . $i => commerce_line_item_title($line_item_wrapper->value()),
         'L_PAYMENTREQUEST_0_AMT' . $i => commerce_paypal_price_amount($l_amt, $currency_code),
         'L_PAYMENTREQUEST_0_QTY' . $i => round($line_item_wrapper->quantity->value()),
+        'L_PAYMENTREQUEST_0_NUMBER' . $i => $line_item_wrapper->line_item_label->value(),
       );
-
-      // If it was a product line item, add the SKU.
-      if (in_array($line_item_wrapper->type->value(), commerce_product_line_item_types())) {
-        $nvp['L_PAYMENTREQUEST_0_NUMBER' . $i] = $line_item_wrapper->line_item_label->value();
-      }
-      else {
-        // Otherwise add the label as the description.
-        $nvp['L_PAYMENTREQUEST_0_NUMBER' . $i] = $line_item_wrapper->line_item_label->value();
-      }
 
       $i++;
     }
