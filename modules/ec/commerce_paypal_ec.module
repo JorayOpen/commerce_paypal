@@ -1591,7 +1591,7 @@ function commerce_paypal_ec_bml_button_url() {
  * @see https://www.paypal.com/webapps/mpp/logo-center
  */
 function commerce_paypal_ec_mark_url() {
-  return url(drupal_get_path('module', 'commerce_paypal_ec') . '/images/paypal-ec-logo.gif', array('absolute' => TRUE));
+  return file_create_url(drupal_get_path('module', 'commerce_paypal_ec') . '/images/paypal-ec-logo.gif');
 }
 
 
