@@ -1415,10 +1415,11 @@ function commerce_paypal_ec_customer_profile($order, $profile_type, $response, $
     $address['first_name'] = $response['FIRSTNAME'];
     $address['last_name'] = $response['LASTNAME'];
     $address['name_line'] = $address['first_name'] . ' ' . $address['last_name'];
+    $address['country'] = $response['COUNTRYCODE'];
   }
+  // Otherwise if it's a shipping profile, populate the address with all of
+  // the shipping information returned from PayPal.
   elseif ($profile_type == 'shipping') {
-    // Otherwise if it's a shipping profile, populate the address with all of
-    // the shipping information returned from PayPAl.
 
     // Map addressfield value keys to keys available in the response array.
     $key_map = array(
