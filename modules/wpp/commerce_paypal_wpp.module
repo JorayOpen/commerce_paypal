@@ -379,8 +379,8 @@ function commerce_paypal_wpp_submit_form_submit($payment_method, $pane_form, $pa
     // Customer Information.
     'EMAIL' => substr($order->mail, 0, 127),
     'IPADDRESS' => substr($ip_address, 0, filter_var($ip_address, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4) ? 15 : 45),
-    'FIRSTNAME' => substr($billing_address['first_name'], 0, 25),
-    'LASTNAME' => substr($billing_address['last_name'], 0, 25),
+    'FIRSTNAME' => drupal_substr($billing_address['first_name'], 0, 25),
+    'LASTNAME' => drupal_substr($billing_address['last_name'], 0, 25),
     'STREET' => substr($billing_address['thoroughfare'], 0, 100),
     'STREET2' => substr($billing_address['premise'], 0, 100),
     'CITY' => substr($billing_address['locality'], 0, 40),
