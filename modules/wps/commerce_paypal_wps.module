@@ -423,6 +423,11 @@ function commerce_paypal_wps_order_form($form, &$form_state, $order, $settings) 
   // Ensure a default value for the payment_method setting.
   $settings += array('payment_method' => '');
 
+  $line_item_types = array();
+  if (function_exists('commerce_product_line_item_types')) {
+    $line_item_types = commerce_product_line_item_types();
+  }
+
   // Build the data array that will be translated into hidden form values.
   $data = array(
     // Specify the checkout experience to present to the user.
@@ -468,11 +473,15 @@ function commerce_paypal_wps_order_form($form, &$form_state, $order, $settings) 
     // Use the timestamp to generate a unique invoice number
     'invoice' => commerce_paypal_ipn_invoice($order),
 
-    // Define a single item in the cart representing the whole order
+    // Define a single item in the cart representing the whole order.
     'amount_1' => commerce_paypal_price_amount(commerce_currency_convert($amount, $order_currency_code, $currency_code), $currency_code),
-    'item_name_1' => t('Order @order_number at @store', array('@order_number' => $order->order_number, '@store' => variable_get('site_name', url('<front>', array('absolute' => TRUE))))),
+    'item_name_1' => t('Order @order_number at @store', array(
+      '@order_number' => $order->order_number,
+      '@store' => variable_get('site_name',
+        url('<front>', array('absolute' => TRUE))),
+    )),
     'on0_1' => t('Product count'),
-    'os0_1' => commerce_line_items_quantity($wrapper->commerce_line_items, commerce_product_line_item_types()),
+    'os0_1' => commerce_line_items_quantity($wrapper->commerce_line_items, $line_item_types),
   );
 
   // Allow modules to alter parameters of the API request.
